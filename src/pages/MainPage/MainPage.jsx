@@ -1,38 +1,62 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { getAllPosts, reset } from '../../redux/posts/postSlice'
-import './MainPage.scss'
-import { Link } from 'react-router-dom'
+
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllPosts, reset, getPostById } from "../../redux/posts/postSlice";
+import { getPostComments } from "../../redux/comments/commentSlice";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import Post from "../../components/Post/Post";
+import PostModal from "../../components/PostModal/PostModal";
 
 const MainPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
 
-  const dispatch = useDispatch()
+  const { posts, isLoading, post: selectedPost } = useSelector(
+    (state) => state.posts
+  );
+  const { comments } = useSelector((state) => state.comments);
+
   useEffect(() => {
     const fetchPosts = async () => {
-      await dispatch(getAllPosts())
-      await dispatch(reset())
+      await dispatch(getAllPosts());
+      await dispatch(reset());
+    };
+    fetchPosts();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (params.id) {
+      dispatch(getPostById(params.id));
+      dispatch(getPostComments(params.id));
     }
-    fetchPosts()
-  }, [dispatch])
-  const { posts, isLoading } = useSelector((state) => state.posts)
+  }, [dispatch, params.id]);
+
+  const handleCloseModal = () => {
+    navigate("/", { replace: true });
+  };
+
   return (
-    <>
-      <h1>Main</h1>
-      {isLoading ? 'Cargando...' :
-        <div className='posts'>
-          {posts && posts.map((post, index) => (
-            <div className='__post' key={index}>
+    <div className="main-page">
+      {isLoading ? (
+        "Cargando..."
+      ) : (
+        <div className="posts">
+          {posts &&
+            posts.map((post) => <Post key={post._id} post={post} />)}
+        </div>
+      )}
 
-              <h2>{post.name}</h2>
-              <p>{post.content}</p>
-              <Link to={`id/${post._id}`}>
-              click</Link>
-            </div>
-          ))}
+      {params.id && selectedPost && (
+        <PostModal
+          post={selectedPost}
+          comments={comments}
+          onClose={handleCloseModal}
+        />
+      )}
+    </div>
+  );
+};
 
-        </div>}
-    </>
-  )
-}
-
-export default MainPage
+export default MainPage;

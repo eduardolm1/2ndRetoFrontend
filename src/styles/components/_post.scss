@@ -1,0 +1,143 @@
+.__post {
+  background-color: var(--post-bg);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+  
+
+  .__post-header,
+  .__post-body,
+  .__post-footer {
+    padding: 20px;
+  }
+
+  .__post-header {
+    display: flex;
+    flex-direction: row;
+
+    & img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    & .__post-user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 14px;
+      color: var(--text-color);
+    }
+  }
+
+
+
+  .follow-btn {
+    margin-left: auto;
+    border-radius: 50px;
+    padding: 0px 20px;
+    border: 0;
+    color: var(--text-invert-color);
+    font-weight: 600;
+    background: var(--bg-invert-color);
+    cursor: pointer;
+
+    &:hover {
+      scale: 1.05;
+    }
+  }
+
+
+
+
+
+  .user-link {
+    border: 0;
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover {
+      scale: 1.05;
+    }
+  }
+
+  .__post-body {
+    color: var(--text-color);
+
+    & h2 {
+      margin: 0px;
+    }
+
+    & p {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+  }
+
+  .__post-footer {
+    display: flex;
+    flex-direction: row;
+
+    & button {
+      border: 0;
+      background-color: transparent;
+      color: var(--icon-color);
+      font-size: 16px;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      & svg {
+        width: 30px;
+      }
+
+      &:hover {
+        background-color: var(--aside-hover-bg);
+      }
+    }
+  }
+}
+
+.post-image-modal {
+  img {
+    width: 500px;
+  }
+
+}
+
+.text-red-500 {
+  color: #f56565;
+}
+
+
+
+
+
+.text-red-500 {}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+  @media (max-width: 1024px) {
+    .follow-btn {
+      padding: 0px 10px;
+    }
+
+
+  }

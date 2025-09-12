@@ -1,0 +1,23 @@
+body.light {
+  --bg-color: #F2F4F7;
+  --text-color: #000000;
+  --bg-invert-color: #34343a;
+  --text-invert-color: #d6d6d6;
+  --icon-color: #111111;
+  --box-bg: #f8f6f6;
+  --input-bg: #f1f1f1;
+  --post-bg: #fff;
+  --aside-hover-bg: rgb(216, 216, 216);
+}
+
+body.dark {
+  --bg-color: #222222;
+  --text-color: #ffffff;
+  --bg-invert-color: #cecece;
+  --text-invert-color: #0f0f0f;
+  --icon-color: #eeeeee;
+  --box-bg: #2a2a2a;
+  --input-bg: #333333;
+  --post-bg: #2a2b2c;
+  --aside-hover-bg: rgb(49, 49, 49);
+}

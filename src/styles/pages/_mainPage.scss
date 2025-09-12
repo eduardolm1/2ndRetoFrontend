@@ -1,0 +1,27 @@
+.posts {
+  width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 10px;
+  padding: 10px 0;
+
+  a {
+    text-decoration: none;
+  }
+
+  img {
+    width: 100%;
+  }
+}
+
+.main-page {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .posts {
+    width: 100%;
+  }
+}
