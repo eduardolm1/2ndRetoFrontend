@@ -1,0 +1,152 @@
+.layout {
+  display: flex;
+}
+
+main {
+  width: 70%;
+  padding-top: 30px;
+}
+
+.sidebar {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  display: flex;justify-content: center;
+  margin-left: 5px;
+}
+
+.sidebar li a,
+.sidebar li button {
+  color: var(--text-color);
+  text-decoration: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  border-radius: 10px;
+}
+
+.sidebar li a:hover,
+.sidebar li button:hover {
+  background-color: var(--aside-hover-bg);
+}
+
+.sidebar .logo {
+  width: 60px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.sidebar .icon-compass {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.sidebar.desktop {
+  width: 300px;
+
+  img {
+    width: 35px;
+    border-radius: 100px;
+  }
+}
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: none;
+  font-size: 2rem;
+  z-index: 1102;
+  cursor: pointer;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 5;
+}
+
+@media (max-width: 1024px) {
+  main {
+    width: 85%;
+    padding: 0 10px;
+    margin-left: 60px;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 60px;
+    transition: left 0.3s ease;
+    z-index: 10;
+  }
+
+  .sidebar.open {
+    width: 300px;
+  }
+
+  .sidebar ul li span {
+    display: none;
+  }
+
+  .sidebar.open ul li span {
+    display: inline;
+  }
+
+  .sidebar.mobile {
+    ul {
+      margin-top: 70px;
+    }
+
+    img {
+      width: 40px;
+      border-radius: 100px;
+    }
+  }
+
+  .sidebar-toggle {
+    display: block;
+  }
+
+  .overlay.show {
+    display: block;
+  }
+}

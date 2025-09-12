@@ -1,0 +1,38 @@
+.formLogin {
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  gap: 10px;
+  padding: 20px;
+  background-color: var(--box-bg);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+
+  h2 {
+    text-align: center;
+    color: var(--text-color);
+  }
+
+  input {
+    padding: 15px 10px;
+    border-radius: 5px;
+    border: 0;
+    background-color: var(--input-bg);
+    box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    color: var(--text-color);
+  }
+
+  button {
+    padding: 15px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 10px;
+    border: 0;
+    box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.2);
+    background-color: #323232;
+    cursor: pointer;
+  }
+}

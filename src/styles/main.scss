@@ -1,0 +1,13 @@
+// src/styles/main.scss
+
+@use  'themes/theme';
+@use  'base/base';
+@use  'layout/aside';
+@use  'pages/mainPage';
+@use  'pages/loginPage';
+@use  'pages/profilePage';
+@use  'pages/connectPage';
+@use  'pages/registerPage';
+@use  'components/post';
+@use  'components/postModal';
+

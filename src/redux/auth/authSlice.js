@@ -1,13 +1,59 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import authService from './authService'
+
 const userStorage = JSON.parse(localStorage.getItem('user'))
 const tokenStorage = JSON.parse(localStorage.getItem('token'))
 
 const initialState = {
   user: userStorage ? userStorage : null,
   token: tokenStorage ? tokenStorage : null,
+  users: [],
+  isLoading: false,
+  isSuccess: false,
+  isError: false,
+  message: "",
 }
 
+export const register = createAsyncThunk('auth/register',
+  async (userData, thunkAPI) => {
+    try {
+      return await authService.register(userData)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message)
+    }
+  })
+
+export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
+  try {
+    return await authService.login(user)
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || error.message)
+  }
+})
+
+export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+  try {
+    return await authService.logout()
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || error.message)
+  }
+})
+
+export const getInfo = createAsyncThunk("auth/getInfo", async (id, thunkAPI) => {
+  try {
+    return await authService.getInfo(id)
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || error.message)
+  }
+})
+
+export const getUsers = createAsyncThunk("auth/getUsers", async (_, thunkAPI) => {
+  try {
+    return await authService.getUsers()
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || error.message)
+  }
+})
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -23,39 +69,33 @@ export const authSlice = createSlice({
         state.user = null
         state.token = null
       })
-
+      .addCase(getInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.userInfo = action.payload;
+      })
+      .addCase(getInfo.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.userInfo = null;
+      })
+      .addCase(getUsers.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(getUsers.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.users = action.payload
+      })
+      .addCase(getUsers.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
   },
-
 })
-
-export const register = createAsyncThunk('auth/register',
-  async (userData) => {
-    try {
-      return await authService.register(userData)
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-export const login = createAsyncThunk('auth/login', async (user) => {
-  try {
-    return await authService.login(user)
-  } catch (error) {
-    console.error(error)
-  }
-})
-
-export const logout = createAsyncThunk('auth/logout', async () => {
-  try {
-    return await authService.logout()
-  } catch (error) {
-    console.error(error)
-  }
-})
-
-
-
-
-
 
 export default authSlice.reducer

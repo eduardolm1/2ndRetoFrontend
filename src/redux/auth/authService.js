@@ -15,23 +15,40 @@ const login = async (userData) => {
  }
  return res.data
 }
-const logout = async () => {
+const logout = async (userData) => {
 const token = JSON.parse(localStorage.getItem('token'))
- const res = await axios.delete(`${API_URL}/users/logout`, {
+ const res = await axios.post(`${API_URL}/users/logout`, userData,{
    headers: {
-     authorization: token,
+     "Authorization": token,
    }
  })
   if (res.data) localStorage.clear()
  return res.data
 }
 
-
+const getInfo = async (id) => {
+  const token = JSON.parse(localStorage.getItem('token'));
+  const res = await axios.get(`${API_URL}/users/getInfo/${id}`, {
+    headers: {
+      "Authorization": `${token}`
+    }
+  })
+  return res.data
+}
+const getUsers = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  const res = await axios.get(`${API_URL}/users/`, {
+    headers: { Authorization: `${token}` },
+  });
+  return res.data;
+};
 
 const authService = {
  register,
  login,
- logout
+ logout,
+ getUsers,
+ getInfo
 }
 
 export default authService
