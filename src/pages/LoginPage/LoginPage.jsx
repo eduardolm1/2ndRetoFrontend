@@ -57,6 +57,7 @@ const LoginPage = () => {
           ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
         </p>
       </form>
+      <p>Para el backend se esta usando Render puede ser que tarde medio minuto la primera vez en encenderse</p>
       <Toaster />
     </div>
   )
