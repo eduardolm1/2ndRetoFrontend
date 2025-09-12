@@ -7,7 +7,7 @@ export default defineConfig({
     server: {
     proxy: {
       '/local': {
-        target: 'http://localhost:3000/',
+        target: 'https://twondretobackend.onrender.com/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/local/, ''),
       },

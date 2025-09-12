@@ -15,11 +15,9 @@ const ConnectPage = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        console.log("Cargando usuarios...");
         dispatch(getUsers())
             .unwrap()
             .then((users) => {
-                console.log("Usuarios cargados exitosamente:", users);
             })
             .catch(err => {
                 console.error("Error al cargar usuarios:", err);
@@ -28,8 +26,6 @@ const ConnectPage = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        console.log("Usuarios actualizados:", users);
-        console.log("Siguiendo actualizado:", following);
     }, [users, following]);
 
     const filteredUsers = users?.filter(u => u._id !== authUser?._id) || [];
