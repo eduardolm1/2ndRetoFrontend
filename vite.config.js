@@ -1,16 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',
     proxy: {
-      '/local': {
-        target: 'https://twondretobackend.onrender.com/',
+      '/api': {
+        target: 'https://second-reto-backend-89kry2awb.vercel.app',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/local/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   }
