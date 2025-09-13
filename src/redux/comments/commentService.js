@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = '/local';
+const API_URL = '/api';
 
 const createComment = async ({ text, id }) => {
     const token = JSON.parse(localStorage.getItem('token'));

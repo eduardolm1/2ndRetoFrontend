@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/local/follow";
+const API_URL = "/api/follow";
 
 const followUser = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
