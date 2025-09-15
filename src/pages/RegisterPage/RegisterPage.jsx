@@ -45,7 +45,7 @@ const RegisterPage = () => {
         <h2>¡Regístrate!</h2>
         <input type="text" name="name" value={name} onChange={onChange} placeholder='Escribe tu nombre' required />
         <input type="email" name="email" value={email} onChange={onChange} placeholder='Escribe tu correo' required />
-        <input type="number" name="age" value={age} onChange={onChange} placeholder='Escribe tu edad' required />
+        <input type="number" name="age" min={1} value={age} onChange={onChange} placeholder='Escribe tu edad' required />
         <input type="password" name="password" value={password} onChange={onChange} placeholder='Escribe tu contraseña' required />
         <input type="password" name="password2" value={password2} onChange={onChange} placeholder='Confirma tu contraseña' required />
 

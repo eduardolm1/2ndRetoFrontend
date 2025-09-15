@@ -51,7 +51,7 @@ function App() {
                   <ProfilePage />
                 </PrivateZone>
               } />
-              
+
               <Route path='/id/:id?post=:postId' element={
                 <PrivateZone>
                   <ProfilePage />

@@ -40,6 +40,16 @@ const Header = () => {
     dispatch(logout())
     navigate('/login')
   }
+
+  useEffect(() => {
+    const publicRoutes = ['/login', '/register'];
+    const currentPath = window.location.pathname;
+
+    if (!user && !publicRoutes.includes(currentPath)) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
   return (
     <>
 
@@ -52,22 +62,18 @@ const Header = () => {
           )}
           <ul className="header">
             <li>
-            <img
-              className="logo"
-              src={theme === 'dark' ? '/img/logo-dark.png' : '/img/logo-light.png'}
-              alt="logo"
-            />
+              <div>
+                <img
+                  className="logo"
+                  src={theme === 'dark' ? '/img/logo-dark.png' : '/img/logo-light.png'}
+                  alt="logo"
+                />
+              </div>
+
             </li>
 
 
-            {user ? (
-              <button onClick={onLogout}>{!isMobile || sidebarOpen ? 'Logout' : ''}</button>
-            ) : (
-              <>
-                <Link to="/login">{!isMobile || sidebarOpen ? 'Login' : ''}</Link>
-                <Link to="/register">{!isMobile || sidebarOpen ? 'Register' : ''}</Link>
-              </>
-            )}
+
 
             <li>
               <Link to="/">
@@ -82,19 +88,20 @@ const Header = () => {
               </Link>
             </li>
 
+
             {user && (
-            <li>
-              <Link to={`/profile/${user._id}`}>
-                <img src="/img/image.png" alt="" />
-                {!isMobile || sidebarOpen ? <span>{user.name}</span> : ''}
-              </Link>
-            </li>
+              <li>
+                <Link to={`/profile/${user._id}`}>
+                  <img src="/img/image.png" alt="" />
+                  {!isMobile || sidebarOpen ? <span>{user.name}</span> : ''}
+                </Link>
+              </li>
             )}
 
 
             <li>
               <button onClick={toggleTheme}>
-                {!isMobile || sidebarOpen ? <span>{theme === 'dark' ? 'Light' : 'Dark'}</span> : null}
+                {!isMobile || sidebarOpen ? <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span> : null}
               </button>
             </li>
           </ul>

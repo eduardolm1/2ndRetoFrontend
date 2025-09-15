@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "/api/follow";
+const API_URL = import.meta.env.VITE_API_URL || "/api";
 
 const followUser = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const res = await axios.post(
-    `${API_URL}/follow/${id}`,
+    `${API_URL}/follow/follow/${id}`,
     {},
     {
       headers: {
@@ -19,7 +19,7 @@ const followUser = async (id) => {
 const unfollowUser = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const res = await axios.post(
-    `${API_URL}/unfollow/${id}`,
+    `${API_URL}/follow/unfollow/${id}`,
     {},
     {
       headers: {

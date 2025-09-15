@@ -23,6 +23,15 @@ const Post = ({ post }) => {
 
   const updatedPost = posts.find((p) => p._id === post._id) || post;
 
+  const getPostOwner = () => {
+    if (typeof updatedPost.userId === "object") {
+      return updatedPost.userId;
+    }
+
+    return null;
+  };
+
+  const postOwner = getPostOwner();
   const ownerId = getOwnerId(updatedPost.userId);
   const hasLiked = updatedPost.likes?.includes(authUser._id);
   const isFollowing = following.includes(ownerId);
@@ -58,7 +67,13 @@ const Post = ({ post }) => {
     <div className="__post-link" onClick={handlePostClick}>
       <div className="__post">
         <div className="__post-header">
-          <img src="/img/image.png" alt="user avatar" />
+          <img 
+            src={postOwner?.profileImage || "/img/image.png"} 
+            alt="user avatar" 
+            onError={(e) => {
+              e.target.src = "/img/image.png";
+            }}
+          />
           <div className="__post-user-info">
             <div>
               <button
@@ -70,20 +85,15 @@ const Post = ({ post }) => {
                   navigate(`/profile/${ownerId}`);
                 }}
               >
-                {typeof updatedPost.userId === "object"
-                  ? updatedPost.userId._id === authUser._id
-                    ? "Yo"
-                    : updatedPost.userId.name
-                  : updatedPost.userId === authUser._id
-                  ? "Yo"
-                  : "Usuario"}
+                {postOwner ? (
+                  postOwner._id === authUser._id ? "Yo" : postOwner.name
+                ) : (
+                  "Usuario"
+                )}
               </button>
               <span>
                 {" "}
-                {typeof updatedPost.userId === "object"
-                  ? updatedPost.userId.followers?.length || 0
-                  : 0}{" "}
-                seguidores
+                {postOwner?.followers?.length || 0} seguidores
               </span>
             </div>
             {formatRelativeDate(updatedPost.createdAt)}

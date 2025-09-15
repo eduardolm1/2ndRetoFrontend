@@ -4,12 +4,16 @@ import { useParams, useSearchParams } from "react-router-dom";
 import Post from "../../components/Post/Post";
 import { followUser, unfollowUser } from "../../redux/follow/followSlice";
 import { getPostComments } from "../../redux/comments/commentSlice";
-import { likePost, dislikePost } from "../../redux/posts/postSlice";
-import { getInfo } from "../../redux/auth/authSlice"; 
+import { likePost, dislikePost, updatePost, deletePost, createPost } from "../../redux/posts/postSlice";
+import { getInfo, updateUser } from "../../redux/auth/authSlice"; 
 import ChartIcon from "../../components/svg/ChartIcon";
 import LikeIcon from "../../components/svg/LikeIcon";
 import MultimediaIcon from "../../components/svg/MultimediaIcon";
 import PostModal from "../../components/PostModal/PostModal";
+import EditPostModal from "../../components/EditPostModal/EditPostModal";
+import EditProfileModal from "../../components/EditProfileModal/EditProfileModal";
+import CreatePostModal from "../../components/CreatePostModal/CreatePostModal";
+import DesignIcon from "../../components/svg/DesignIcon";
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -21,8 +25,12 @@ const ProfilePage = () => {
   );
   const { following } = useSelector((state) => state.follow);
   const { comments } = useSelector((state) => state.comments);
+  const { isLoading: postLoading } = useSelector((state) => state.posts);
 
   const [activeTab, setActiveTab] = useState("posts");
+  const [editingPost, setEditingPost] = useState(null);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [creatingPost, setCreatingPost] = useState(false);
   const postId = searchParams.get("post");
 
   useEffect(() => {
@@ -37,8 +45,8 @@ const ProfilePage = () => {
     }
   }, [dispatch, postId]);
 
-  if (authLoading) return <div>Cargando...</div>;
-  if (!userInfo) return <div>Usuario no encontrado</div>;
+  if (authLoading) return <div className="loading">Cargando...</div>;
+  if (!userInfo) return <div className="error">Usuario no encontrado</div>;
 
   const profilePosts = userInfo.posts || [];
 
@@ -56,6 +64,7 @@ const ProfilePage = () => {
   else if (activeTab === "likes") postsToRender = likedPosts;
 
   const isFollowing = following.includes(userInfo._id);
+  const isOwnProfile = authUser._id === userInfo._id;
 
   const toggleFollow = () => {
     if (isFollowing) {
@@ -70,6 +79,51 @@ const ProfilePage = () => {
     setSearchParams(searchParams);
   };
 
+  const handleEditPost = (post) => {
+    setEditingPost(post);
+  };
+
+  const handleSavePost = (updatedPost) => {
+    dispatch(updatePost(updatedPost));
+    setEditingPost(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPost(null);
+  };
+
+  const handleDeletePost = (post) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar esta publicación?")) {
+      dispatch(deletePost(post._id));
+    }
+  };
+
+  const handleEditProfile = () => {
+    setEditingProfile(true);
+  };
+
+  const handleSaveProfile = (updatedProfile) => {
+    dispatch(updateUser(updatedProfile));
+    setEditingProfile(false);
+  };
+
+  const handleCancelEditProfile = () => {
+    setEditingProfile(false);
+  };
+
+  const handleCreatePost = () => {
+    setCreatingPost(true);
+  };
+
+  const handleSaveNewPost = (postData) => {
+    dispatch(createPost(postData));
+    setCreatingPost(false);
+  };
+
+  const handleCancelCreate = () => {
+    setCreatingPost(false);
+  };
+
   const selectedPost = postId
     ? profilePosts.find((p) => p._id === postId)
     : null;
@@ -78,18 +132,31 @@ const ProfilePage = () => {
     <section className="section-data-container">
       <div className="user-data-container">
         <div className="user-img-container">
-          <img src="/img/image.png" alt="user" />
+          <img src={userInfo.profileImage || "/img/image.png"} alt="user" />
+          {isOwnProfile && (
+            <button className="edit-profile-btn" onClick={() => setEditingProfile(true)}>
+              Editar Perfil
+            </button>
+          )}
         </div>
 
         <div className="user-data-info-container">
           <div className="title-follow-more-container">
             <h2 className="user-name-title">{userInfo.name}</h2>
-            {authUser._id !== userInfo._id && (
+            {!isOwnProfile ? (
               <button className="follow-btn" onClick={toggleFollow}>
                 {isFollowing ? "Dejar de seguir" : "Seguir"}
               </button>
+            ) : (
+              <button className="create-post-btn" onClick={handleCreatePost}>
+                Crear Publicación
+              </button>
             )}
-            <button className="btn-more">⋮</button>
+            {isOwnProfile && ( // ← CORREGIDO: Añadida condición
+              <button className="btn-more" onClick={() => setEditingProfile(true)}>
+                <DesignIcon/>
+              </button>
+            )}
           </div>
 
           <div className="user-numbers-container">
@@ -108,7 +175,6 @@ const ProfilePage = () => {
             <p>
               <strong>{userInfo.name}</strong>
             </p>
-            <p>{userInfo.email}</p>
             <p>Edad: {userInfo.age}</p>
           </div>
         </div>
@@ -139,17 +205,36 @@ const ProfilePage = () => {
       </div>
 
       <div className="posts">
-        {postsToRender.length > 0 ? (
+        {postLoading ? (
+          <div className="loading">Cargando publicaciones...</div>
+        ) : postsToRender.length > 0 ? (
           postsToRender.map((post) => (
-            <Post
-              key={post._id}
-              post={post}
-              onLike={() => dispatch(likePost(post._id))}
-              onDislike={() => dispatch(dislikePost(post._id))}
-            />
+            <div key={post._id} className="post-with-actions">
+              <Post
+                post={post}
+                onLike={() => dispatch(likePost(post._id))}
+                onDislike={() => dispatch(dislikePost(post._id))}
+              />
+              {isOwnProfile && (
+                <div className="post-actions">
+                  <button 
+                    className="edit-post-btn"
+                    onClick={() => handleEditPost(post)}
+                  >
+                    Editar
+                  </button>
+                  <button 
+                    className="delete-post-btn"
+                    onClick={() => handleDeletePost(post)}
+                  >
+                  ✖
+                  </button>
+                </div>
+              )}
+            </div>
           ))
         ) : (
-          <p>No hay publicaciones</p>
+          <p className="no-posts">No hay publicaciones para mostrar</p>
         )}
       </div>
 
@@ -160,6 +245,29 @@ const ProfilePage = () => {
           onClose={closeModal}
           onLike={() => dispatch(likePost(selectedPost._id))}
           onDislike={() => dispatch(dislikePost(selectedPost._id))}
+        />
+      )}
+
+      {editingPost && (
+        <EditPostModal
+          post={editingPost}
+          onSave={handleSavePost}
+          onCancel={handleCancelEdit}
+        />
+      )}
+
+      {editingProfile ? (
+        <EditProfileModal
+          user={userInfo}
+          onSave={handleSaveProfile}
+          onCancel={handleCancelEditProfile}
+        />
+      ) : null}
+
+      {creatingPost && (
+        <CreatePostModal
+          onSave={handleSaveNewPost}
+          onCancel={handleCancelCreate}
         />
       )}
     </section>
