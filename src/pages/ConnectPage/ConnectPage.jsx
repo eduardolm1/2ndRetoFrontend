@@ -17,16 +17,11 @@ const ConnectPage = () => {
     useEffect(() => {
         dispatch(getUsers())
             .unwrap()
-            .then((users) => {
-            })
             .catch(err => {
                 console.error("Error al cargar usuarios:", err);
                 setError("Error al cargar usuarios. Por favor, intenta nuevamente.");
             });
     }, [dispatch]);
-
-    useEffect(() => {
-    }, [users, following]);
 
     const filteredUsers = users?.filter(u => u._id !== authUser?._id) || [];
 
@@ -37,7 +32,6 @@ const ConnectPage = () => {
 
     const handleSlideClick = (groupIndex, slideIndex, user) => {
         const currentActiveIndex = activeIndices[groupIndex] || 0;
-        
         if (currentActiveIndex === slideIndex) {
             navigate(`/profile/${user._id}`);
         } else {
@@ -51,14 +45,12 @@ const ConnectPage = () => {
     const navigateSlide = (groupIndex, direction) => {
         const currentActiveIndex = activeIndices[groupIndex] || 0;
         const groupLength = groupedUsers[groupIndex].length;
-
         let newIndex;
         if (direction === 'prev') {
             newIndex = currentActiveIndex === 0 ? groupLength - 1 : currentActiveIndex - 1;
         } else {
             newIndex = currentActiveIndex === groupLength - 1 ? 0 : currentActiveIndex + 1;
         }
-
         setActiveIndices(prev => ({
             ...prev,
             [groupIndex]: newIndex
@@ -95,27 +87,28 @@ const ConnectPage = () => {
             <div className="slider-container">
                 {groupedUsers.map((userGroup, groupIndex) => {
                     const groupActiveIndex = activeIndices[groupIndex] || 0;
-
                     return (
                         <div key={groupIndex} className="user-group">
                             <div className="accordion-slider">
                                 {userGroup.map((user, index) => {
                                     const isFollowing = following.includes(user._id);
-
                                     return (
                                         <div
                                             key={user._id}
                                             className={`slide ${groupActiveIndex === index ? "active" : ""}`}
                                             onClick={() => handleSlideClick(groupIndex, index, user)}
                                             style={{
-                                                backgroundImage: `url("/img/image-city.png")`,
+                                                backgroundImage: user.profileImage
+                                                    ? `url('${user.profileImage}')`
+                                                    : `url('/img/image-city.png')`,
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
                                             }}
                                         >
                                             <div className="slide-box">
                                                 <div className="slide-content">
                                                     <div className="user-age">{user.age || 'Edad no especificada'} años</div>
                                                     <div className="user-name">{user.name || 'Usuario sin nombre'}</div>
-
                                                     <div className="user-stats">
                                                         <div className="stat-row">
                                                             <span className="stat-label">Seguidores:</span>
@@ -130,7 +123,6 @@ const ConnectPage = () => {
                                                             </span>
                                                         </div>
                                                     </div>
-
                                                     <div className="user-badges">
                                                         <div className="badge">
                                                             <div className="badge-icon"></div>
@@ -138,7 +130,6 @@ const ConnectPage = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <button
                                                     className={`follow-button ${isFollowing ? "following" : ""}`}
                                                     onClick={(e) => {
@@ -155,7 +146,6 @@ const ConnectPage = () => {
                                     );
                                 })}
                             </div>
-
                             <button
                                 className="navigation-arrows nav-prev"
                                 onClick={() => navigateSlide(groupIndex, 'prev')}

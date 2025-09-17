@@ -31,6 +31,7 @@ const ProfilePage = () => {
   const [editingPost, setEditingPost] = useState(null);
   const [editingProfile, setEditingProfile] = useState(false);
   const [creatingPost, setCreatingPost] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const postId = searchParams.get("post");
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const ProfilePage = () => {
     }
   }, [dispatch, postId]);
 
-  if (authLoading) return <div className="loading">Cargando...</div>;
+  if (authLoading || refreshing) return <div className="loading">Cargando...</div>;
   if (!userInfo) return <div className="error">Usuario no encontrado</div>;
 
   const profilePosts = userInfo.posts || [];
@@ -83,18 +84,34 @@ const ProfilePage = () => {
     setEditingPost(post);
   };
 
-  const handleSavePost = (updatedPost) => {
-    dispatch(updatePost(updatedPost));
-    setEditingPost(null);
+  const handleSavePost = async (updatedPost) => {
+    try {
+      setRefreshing(true);
+      await dispatch(updatePost(updatedPost)).unwrap();
+      await dispatch(getInfo(id)).unwrap();
+      setEditingPost(null);
+    } catch (error) {
+      console.error("Error al actualizar el post:", error);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleCancelEdit = () => {
     setEditingPost(null);
   };
 
-  const handleDeletePost = (post) => {
+  const handleDeletePost = async (post) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar esta publicación?")) {
-      dispatch(deletePost(post._id));
+      try {
+        setRefreshing(true);
+        await dispatch(deletePost(post._id)).unwrap();
+        await dispatch(getInfo(id)).unwrap();
+      } catch (error) {
+        console.error("Error al eliminar el post:", error);
+      } finally {
+        setRefreshing(false);
+      }
     }
   };
 
@@ -102,9 +119,17 @@ const ProfilePage = () => {
     setEditingProfile(true);
   };
 
-  const handleSaveProfile = (updatedProfile) => {
-    dispatch(updateUser(updatedProfile));
-    setEditingProfile(false);
+  const handleSaveProfile = async (updatedProfile) => {
+    try {
+      setRefreshing(true);
+      await dispatch(updateUser(updatedProfile)).unwrap();
+      await dispatch(getInfo(id)).unwrap();
+      setEditingProfile(false);
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleCancelEditProfile = () => {
@@ -115,9 +140,17 @@ const ProfilePage = () => {
     setCreatingPost(true);
   };
 
-  const handleSaveNewPost = (postData) => {
-    dispatch(createPost(postData));
-    setCreatingPost(false);
+  const handleSaveNewPost = async (postData) => {
+    try {
+      setRefreshing(true);
+      await dispatch(createPost(postData)).unwrap();
+      await dispatch(getInfo(id)).unwrap();
+      setCreatingPost(false);
+    } catch (error) {
+      console.error("Error al crear el post:", error);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleCancelCreate = () => {
@@ -127,7 +160,7 @@ const ProfilePage = () => {
   const selectedPost = postId
     ? profilePosts.find((p) => p._id === postId)
     : null;
-
+  
   return (
     <section className="section-data-container">
       <div className="user-data-container">
@@ -152,7 +185,7 @@ const ProfilePage = () => {
                 Crear Publicación
               </button>
             )}
-            {isOwnProfile && ( // ← CORREGIDO: Añadida condición
+            {isOwnProfile && (
               <button className="btn-more" onClick={() => setEditingProfile(true)}>
                 <DesignIcon/>
               </button>
@@ -256,13 +289,13 @@ const ProfilePage = () => {
         />
       )}
 
-      {editingProfile ? (
+      {editingProfile && (
         <EditProfileModal
           user={userInfo}
           onSave={handleSaveProfile}
           onCancel={handleCancelEditProfile}
         />
-      ) : null}
+      )}
 
       {creatingPost && (
         <CreatePostModal
